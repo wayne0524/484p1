@@ -1,9 +1,5 @@
 DROP TABLE Receiver;
 DROP TABLE Sender;
-
--- ALTER TABLE Messages
--- 	DROP COLUMN sender;
-
 DROP TABLE Messages;
 DROP TABLE Attend;
 DROP TABLE Education;
@@ -23,4 +19,5 @@ DROP TABLE Event;
 DROP TABLE Hometown;
 DROP TABLE Currenthome;
 DROP TABLE Location;
+DROP TABLE Friendship;
 DROP TABLE Users;
