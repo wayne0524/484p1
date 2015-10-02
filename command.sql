@@ -1,3 +1,3 @@
-@dropTables
 @createTables
 @loadData
+@createViews

@@ -1,3 +1,4 @@
+
 DROP TABLE Receiver;
 DROP TABLE Sender;
 DROP TABLE Messages;

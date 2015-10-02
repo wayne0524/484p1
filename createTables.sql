@@ -1,41 +1,41 @@
 
 -- User Information--
 CREATE TABLE Users
-   (userid INTEGER, 
-	 fname CHAR(20) NOT NULL, 
-	 lname CHAR(20) NOT NULL,
-	 yob INTEGER NOT NULL,
-	 mob INTEGER NOT NULL,
-	 dob INTEGER NOT NULL,
-	 gender CHAR(10) NOT NULL,
+   (userid VARCHAR(100),
+	 fname VARCHAR(100), 
+	 lname VARCHAR(100),
+	 yob INTEGER,
+	 mob INTEGER,
+	 dob INTEGER,
+	 gender VARCHAR(100),
 	PRIMARY KEY(userid));
 
 
 CREATE TABLE friendship
-	(user1 INTEGER,
-	 user2 INTEGER,
+	(user1 VARCHAR(100),
+	 user2 VARCHAR(100),
 	 PRIMARY KEY(user1,user2));
 
 -- Create LLLLocation--
 CREATE TABLE Location
 	(locid INTEGER,
-	 country CHAR(30),
-	 state CHAR(30),
-	 city CHAR(30),
+	 country VARCHAR(100),
+	 state VARCHAR(100),
+	 city VARCHAR(100),
 	 PRIMARY KEY(locid));
 	 --FOREIGN KEY (userid) REFERENCES Users,
 	 --PRIMARY KEY(locid, userid));
 	
 -- Create Table of hometown of Users--
 CREATE TABLE Currenthome
-	(userid INTEGER,
+	(userid VARCHAR(100),
  	 currentlocid INTEGER,
  	 FOREIGN KEY(userid) REFERENCES Users ON DELETE CASCADE,
  	 FOREIGN KEY(currentlocid) REFERENCES Location(locid) ON DELETE CASCADE,
  	 PRIMARY KEY(userid));
 
 CREATE TABLE Hometown
-	(userid INTEGER,
+	(userid VARCHAR(100),
  	 hometownlocid INTEGER,
  	FOREIGN KEY(userid) REFERENCES Users ON DELETE CASCADE,
  	FOREIGN KEY(hometownlocid) REFERENCES Location(locid) ON DELETE CASCADE,
@@ -44,38 +44,34 @@ CREATE TABLE Hometown
 
 -- Event --
 CREATE TABLE Event
-	(eventid INTEGER,
-	 eventname CHAR(40),
-	 tagline CHAR(40),
-	 description CHAR(40),
-	 host CHAR(40),
-	 type CHAR(40),
-	 subtype CHAR(40),
-	 time_start TIMESTAMP,
-	 time_end TIMESTAMP,
+	(eventid VARCHAR(100),
+	 eventname VARCHAR(100),
+	 tagline VARCHAR(100),
+	 description VARCHAR(100),
+	 host VARCHAR(100),
+	 type VARCHAR(100),
+	 subtype VARCHAR(100),
+	 time_start TIMESTAMP(6),
+	 time_end TIMESTAMP(6),
 	 --locid INTEGER,
-	 location CHAR(40),
+	 location VARCHAR(100),
 	 --FOREIGN KEY(locid) REFERENCES Location,
 	 --FOREIGN KEY(creator) REFERENCES Users(userid),
 	 PRIMARY KEY(eventid));
 
 -- Event being helded at location
 CREATE TABLE Holds
-    	(country CHAR(30),
-	     state CHAR(30),
-	     city CHAR(30),
-		 eventid INTEGER,
+    	(locid INTEGER,
+		 eventid VARCHAR(100),
 		--FOREIGN KEY(locid) REFERENCES Location ON DELETE CASCADE,
 		FOREIGN KEY(eventid) REFERENCES Event ON DELETE CASCADE,
-	    --FOREIGN KEY(city) REFERENCES Location ON DELETE CASCADE,
-	    --FOREIGN KEY(state) REFERENCES Location ON DELETE CASCADE,
-	    --FOREIGN KEY(country) REFERENCES Location ON DELETE CASCADE,
-	    PRIMARY KEY(eventid));
+	    FOREIGN KEY(locid) REFERENCES Location ON DELETE CASCADE,
+	    PRIMARY KEY(locid, eventid));
 
 
 CREATE TABLE Creator
-    	(creatorid INTEGER,
-		 eventid INTEGER,
+    	(creatorid VARCHAR(100),
+		 eventid VARCHAR(100),
 		FOREIGN KEY(creatorid) REFERENCES Users(userid) ON DELETE CASCADE,
 		FOREIGN KEY(eventid) REFERENCES Event ON DELETE CASCADE,
 	    PRIMARY KEY(creatorid, eventid));
@@ -83,20 +79,20 @@ CREATE TABLE Creator
 
 -- Table list of all participants, including eventid AND staus --
 CREATE TABLE Participants
-    	(pptid INTEGER,
-		 eventid INTEGER,
-		 status CHAR(20),
+    	(pptid VARCHAR(100),
+		 eventid VARCHAR(100),
+		 status VARCHAR(100),
 		FOREIGN KEY(pptid) REFERENCES Users(userid) ON DELETE CASCADE,
 		FOREIGN KEY(eventid) REFERENCES Event ON DELETE CASCADE,
 	    PRIMARY KEY(pptid, eventid));
 
 -- Photo --
 CREATE TABLE Photo
-	(photoid INTEGER,
-	 caption CHAR(20),
-	 time_created TIMESTAMP,
-	 time_modified TIMESTAMP,
-	 photolink CHAR(20),
+	(photoid VARCHAR(100),
+	 caption VARCHAR(100),
+	 time_created TIMESTAMP(6),
+	 time_modified TIMESTAMP(6),
+	 photolink VARCHAR(100),
 	 --albumid INTEGER,
 	 --KEY(albumid) REFERENCES Album,  added back at end
 	 PRIMARY KEY(photoid));
@@ -105,14 +101,14 @@ CREATE TABLE Photo
 
 -- Album --
 CREATE TABLE Album
-	(albumid INTEGER,
-	  userid INTEGER,
-	  coverphotoid INTEGER,
-	  albumname CHAR(20),
-	  time_created TIMESTAMP,
-	  time_modified TIMESTAMP,
-	  albumlink CHAR(20),
-	  visibility CHAR(20),
+	(albumid VARCHAR(100),
+	  userid VARCHAR(100),
+	  coverphotoid VARCHAR(100),
+	  albumname VARCHAR(100),
+	  time_created TIMESTAMP(6),
+	  time_modified TIMESTAMP(6),
+	  albumlink VARCHAR(100),
+	  visibility VARCHAR(100),
 	  FOREIGN KEY(userid) REFERENCES Users ON DELETE CASCADE,
 	  FOREIGN KEY(coverphotoid) REFERENCES Photo(photoid) ON DELETE CASCADE,
 	  PRIMARY KEY(albumid));
@@ -120,9 +116,9 @@ CREATE TABLE Album
 
 -- Relation: Tags in photos--
 CREATE TABLE Tags
-	(photoid INTEGER,
-	 userid INTEGER,
-	 time_tag TIMESTAMP,
+	(photoid VARCHAR2(100),
+	 userid VARCHAR2(100),
+	 time_tag TIMESTAMP(6),
 	 coo_x INTEGER,
 	 coo_y INTEGER,
 	 FOREIGN KEY(photoid) REFERENCES Photo ON DELETE CASCADE,
@@ -131,18 +127,17 @@ CREATE TABLE Tags
 
 -- Relation: between photo and Album ---
 CREATE TABLE Belongs
-	(photoid INTEGER,
-	 albumid INTEGER,
+	(photoid VARCHAR(100),
+	 albumid VARCHAR(100),
 	 FOREIGN KEY(photoid) REFERENCES Photo ON DELETE CASCADE,
 	 FOREIGN KEY(albumid) REFERENCES Album ON DELETE CASCADE,
 	 PRIMARY KEY(photoid, albumid));
 
 
-
 -- Relation  : Album owned by one user --
 CREATE TABLE Owns
-	(albumid INTEGER,
-	 userid INTEGER,
+	(albumid VARCHAR(100),
+	 userid VARCHAR(100),
 	 FOREIGN KEY(userid) REFERENCES Users ON DELETE CASCADE,
 	 FOREIGN KEY(albumid) REFERENCES Album ON DELETE CASCADE,
 	 PRIMARY KEY(userid, albumid));
@@ -152,34 +147,34 @@ CREATE TABLE Owns
 -- Education  DO WE NEED A EDUCATION ID???????????????????????????????????????????--
 CREATE TABLE Education
 	(eduid INTEGER,
-	 inst_name CHAR(100),	
+	 inst_name VARCHAR(100),	
 	 duration INTEGER,
-	 degree CHAR(100),
-	 concentration CHAR(100),	
+	 degree VARCHAR(100),
+	 concentration VARCHAR(100),	
 	 PRIMARY KEY(eduid));
 
 
 CREATE TABLE Attend
 	(eduid INTEGER,
-	 --userid INTEGER,
-	userid INTEGER,	
+	userid VARCHAR(100),	
 	FOREIGN KEY(userid) REFERENCES Users ON DELETE CASCADE,
-	PRIMARY KEY(eduid));
+	PRIMARY KEY(eduid, userid));
+
 
 -- MEssage 
 CREATE TABLE Messages
 	(messageid INTEGER,
-	 time TIMESTAMP,
+	 time TIMESTAMP(6),
 	 --sender INTEGER,
-	 content CHAR(30),
+	 content VARCHAR(100),
 	 --FOREIGN KEY(sender) REFERENCES Users(userid),
 	 PRIMARY KEY(messageid));	
 
 
 CREATE TABLE Sender
 	(messageid INTEGER,
-	--timesend TIMESTAMP,
-	userid INTEGER,
+	--timesend TIMESTAMP(6),
+	userid VARCHAR(100),
 	--FOREIGN KEY(timesend) REFERENCES Messages(time),
 	FOREIGN KEY(messageid) REFERENCES Messages ON DELETE CASCADE,
 	FOREIGN KEY(userid) REFERENCES Users ON DELETE CASCADE,
@@ -187,15 +182,15 @@ CREATE TABLE Sender
 
 CREATE TABLE Receiver
 	(messageid INTEGER,
-	--timesend TIMESTAMP,
-	userid INTEGER,
+	--timesend TIMESTAMP(6),
+	userid VARCHAR(100),
 	--FOREIGN KEY(timesend) REFERENCES Messages(time),
 	FOREIGN KEY(messageid) REFERENCES Messages ON DELETE CASCADE,
 	FOREIGN KEY(userid) REFERENCES Users ON DELETE CASCADE,
 	PRIMARY KEY(messageid,userid));
 
 -- CREATE TABLE Receiver
--- 	(time TIMESTAMP,
+-- 	(time TIMESTAMP(6),
 -- 	 userid INTEGER,
 -- 	FOREIGN KEY(time) REFERENCES Messages,
 -- 	FOREIGN KEY(userid) REFERENCES Users,
@@ -205,8 +200,14 @@ CREATE TABLE Receiver
 
 
 ALTER TABLE Photo
-	ADD (albumid INTEGER, 
+	ADD (albumid VARCHAR(100), 
 		FOREIGN KEY(albumid) REFERENCES Album ON DELETE CASCADE);
+
+-- ALTER TABLE Photo ADD CONSTRAINT PHOTO_REFERS_ALBUM  FOREIGN KEY (albumid) REFERENCES Album INITIALLY DEFERRED DEFERRABLE;
+-- ALTER TABLE Album ADD CONSTRAINT Album_REFERS_PHOTO  FOREIGN KEY (coverphotoid) REFERENCES Photo INITIALLY DEFERRED DEFERRABLE;
+
+
+
 
 -- ALTER TABLE Messages
 -- 	ADD (sender INTEGER, 
