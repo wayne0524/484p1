@@ -119,8 +119,8 @@ CREATE TABLE Tags
 	(photoid VARCHAR2(100),
 	 userid VARCHAR2(100),
 	 time_tag TIMESTAMP(6),
-	 coo_x INTEGER,
-	 coo_y INTEGER,
+	 coo_x NUMBER,
+	 coo_y NUMBER,
 	 FOREIGN KEY(photoid) REFERENCES Photo ON DELETE CASCADE,
 	 FOREIGN KEY(userid) REFERENCES Users ON DELETE CASCADE,
 	 PRIMARY KEY(photoid, userid));

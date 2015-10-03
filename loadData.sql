@@ -19,8 +19,6 @@ END;
 RUN;
 
 
-
-
 --  Upload all locations ---------
 INSERT INTO Location(city, state, country)
 SELECT DISTINCT HOMETOWN_CITY, HOMETOWN_STATE, HOMETOWN_COUNTRY FROM
