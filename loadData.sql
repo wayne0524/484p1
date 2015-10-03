@@ -1,9 +1,13 @@
+-- Author: Shengwei Ge, Date 10/02/2015 -----------
 
--- Update all Users -------
+
+
+-- Load Data from general DATABASE to  Users Tables-------
 INSERT INTO Users(userid,  fname,      lname,     yob,           mob,            dob,          gender)
 SELECT DISTINCT USER_ID, FIRST_NAME, LAST_NAME, YEAR_OF_BIRTH, MONTH_OF_BIRTH, DAY_OF_BIRTH, GENDER FROM
 keykholt.PUBLIC_USER_INFORMATION;
 
+----------    Trigger 1 -------------------------
 CREATE SEQUENCE loc_1_sequence
 START WITH 1
 INCREMENT BY 1;
@@ -17,9 +21,10 @@ SELECT loc_1_sequence.nextval into :new.locid from dual;
 END;
 .
 RUN;
+----------   End of declaring Trigger 1 -------------------------
 
 
---  Upload all locations ---------
+--  Upload all locations, update Location Tables ------ ---------
 INSERT INTO Location(city, state, country)
 SELECT DISTINCT HOMETOWN_CITY, HOMETOWN_STATE, HOMETOWN_COUNTRY FROM
 keykholt.PUBLIC_USER_INFORMATION
@@ -30,20 +35,27 @@ UNION
 SELECT DISTINCT EVENT_CITY,  EVENT_STATE, EVENT_COUNTRY  FROM
 keykholt.PUBLIC_EVENT_INFORMATION;
 
----------------- TRIGGER DROP   ----------------------------------
+---------------- TRIGGER 1 DROP   ----------------------------------
 DROP SEQUENCE loc_1_sequence;
 DROP TRIGGER loc_1_trigger;
 ---------------- END OF TRIGGER DROP   ----------------------------------
 
 
-INSERT INTO Currenthome(userid, currentlocid)    -- One ?
+
+
+
+
+
+
+--   load currenthome information to Table ----------------------
+INSERT INTO Currenthome(userid, currentlocid)    
 SELECT DISTINCT K.USER_ID, L.locid 
 FROM  keykholt.PUBLIC_USER_INFORMATION K, Location L
    WHERE K.CURRENT_COUNTRY  = L.country
    	AND K.CURRENT_STATE = L.state
    	AND	K.CURRENT_CITY = L.city;
 
-
+--   Load hometown information Table----------------------
 INSERT INTO Hometown(userid, hometownlocid)
 SELECT DISTINCT K.USER_ID, L.locid 
 FROM  keykholt.PUBLIC_USER_INFORMATION K, Location L
@@ -54,7 +66,7 @@ FROM  keykholt.PUBLIC_USER_INFORMATION K, Location L
 
 
 
-
+----------    Trigger 2 -------------------------
 CREATE SEQUENCE loc_2_sequence
 START WITH 1
 INCREMENT BY 1;
@@ -67,6 +79,7 @@ SELECT loc_2_sequence.nextval into :new.eduid from dual;
 END;
 .
 RUN;
+----------  End of declaring  Trigger 2-------------------------
 
 
 
@@ -84,6 +97,9 @@ DROP TRIGGER loc_2_trigger;
 -------------------------------------------------
 -------------------------------------------------
 
+
+
+-- Load data to Attend Table -----------------
 INSERT INTO Attend(eduid, userid)
 SELECT DISTINCT E.eduid, K.USER_ID
 		FROM Education E, keykholt.PUBLIC_USER_INFORMATION K
@@ -94,8 +110,8 @@ SELECT DISTINCT E.eduid, K.USER_ID
 
 
 
---------- Duplicates---------------
------------ Friendship----------------
+----------------Upload  Friendship Table----------------
+--   GetRidOfDuplicates:   Swapped user1 and user2 and check for duplicates-------
 INSERT INTO Friendship(user1, user2)
 SELECT CASE WHEN  
           USER1_ID > USER2_ID 
@@ -109,7 +125,7 @@ CASE WHEN
 FROM keykholt.PUBLIC_ARE_FRIENDS;
 
 
--- Photo --
+-- Upload Photo Table  ---------------------------
 --------------------------------------------------
 INSERT INTO Photo(photoid,  caption,       time_created,        time_modified,        photolink)
 SELECT DISTINCT PHOTO_ID,   PHOTO_CAPTION, PHOTO_CREATED_TIME,   PHOTO_MODIFIED_TIME, PHOTO_LINK FROM
@@ -117,22 +133,22 @@ keykholt.PUBLIC_PHOTO_INFORMATION;
 
 
 
----------------------- Album ----------------
+------------------Upload Album Tables----- ----------------
 INSERT INTO Album(albumid, userid,   coverphotoid,    albumname, time_created,       time_modified,       albumlink,   visibility)
 SELECT DISTINCT ALBUM_ID,  OWNER_ID, COVER_PHOTO_ID, ALBUM_NAME, ALBUM_CREATED_TIME, ALBUM_MODIFIED_TIME, ALBUM_LINK, ALBUM_VISIBILITY FROM
 keykholt.PUBLIC_PHOTO_INFORMATION;
 
 
 
---------  Relations FOR PHOTOS-----------------
-------------Tag ---------------
+-------- Upload  Relations FOR PHOTOS-----------------
+------------------- Tag ---------------
 INSERT INTO Tags(photoid,  userid,          time_tag,        coo_x ,            coo_y)
 SELECT PHOTO_ID, TAG_SUBJECT_ID, TAG_CREATED_TIME , TAG_X_COORDINATE, TAG_Y_COORDINATE FROM
 keykholt.PUBLIC_TAG_INFORMATION;
 
 
 
------ Photo ownership----------------------
+----- Upload Photo ownership ------------------------------
 INSERT INTO Belongs(photoid, albumid)
 SELECT DISTINCT PHOTO_ID ,ALBUM_ID FROM
 keykholt.PUBLIC_PHOTO_INFORMATION;

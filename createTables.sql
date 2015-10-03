@@ -1,5 +1,14 @@
 
--- User Information--
+-- Author: Shengwei Ge, Date 10/02/2015 -----------
+---------------------------------------------------------------------------
+-- Create Tables for Fakebook.
+-- There are two there types of Tables: Identity, relationship and attributes
+-- They represent the whole ER diagran
+---------------------------------------------------------------------------
+
+------  # of Tables Created: 19------------
+
+-------------- User Information---------------
 CREATE TABLE Users
    (userid VARCHAR(100),
 	 fname VARCHAR(100), 
@@ -11,22 +20,22 @@ CREATE TABLE Users
 	PRIMARY KEY(userid));
 
 
+
+-- Relationship: create friendship -----------
 CREATE TABLE friendship
 	(user1 VARCHAR(100),
 	 user2 VARCHAR(100),
 	 PRIMARY KEY(user1,user2));
 
--- Create LLLLocation--
+----------Identity : Create Location-------------------
 CREATE TABLE Location
 	(locid INTEGER,
 	 country VARCHAR(100),
 	 state VARCHAR(100),
 	 city VARCHAR(100),
 	 PRIMARY KEY(locid));
-	 --FOREIGN KEY (userid) REFERENCES Users,
-	 --PRIMARY KEY(locid, userid));
 	
--- Create Table of hometown of Users--
+--  Relationship: Create Table of currenthome of Users--
 CREATE TABLE Currenthome
 	(userid VARCHAR(100),
  	 currentlocid INTEGER,
@@ -34,6 +43,7 @@ CREATE TABLE Currenthome
  	 FOREIGN KEY(currentlocid) REFERENCES Location(locid) ON DELETE CASCADE,
  	 PRIMARY KEY(userid));
 
+--  Relationship: Create Table of hometown of Users--
 CREATE TABLE Hometown
 	(userid VARCHAR(100),
  	 hometownlocid INTEGER,
@@ -42,7 +52,7 @@ CREATE TABLE Hometown
  	PRIMARY KEY(userid));
 
 
--- Event --
+-- Identity:   Event -------------------------------
 CREATE TABLE Event
 	(eventid VARCHAR(100),
 	 eventname VARCHAR(100),
@@ -53,31 +63,27 @@ CREATE TABLE Event
 	 subtype VARCHAR(100),
 	 time_start TIMESTAMP(6),
 	 time_end TIMESTAMP(6),
-	 --locid INTEGER,
 	 location VARCHAR(100),
-	 --FOREIGN KEY(locid) REFERENCES Location,
-	 --FOREIGN KEY(creator) REFERENCES Users(userid),
 	 PRIMARY KEY(eventid));
 
--- Event being helded at location
+-- Relationship:    Event being helded at location ----------
 CREATE TABLE Holds
     	(locid INTEGER,
 		 eventid VARCHAR(100),
-		--FOREIGN KEY(locid) REFERENCES Location ON DELETE CASCADE,
 		FOREIGN KEY(eventid) REFERENCES Event ON DELETE CASCADE,
 	    FOREIGN KEY(locid) REFERENCES Location ON DELETE CASCADE,
 	    PRIMARY KEY(locid, eventid));
 
-
+-- Relationship:    Event being helded at location ----------
 CREATE TABLE Creator
     	(creatorid VARCHAR(100),
-		 eventid VARCHAR(100),
+		 eventid   VARCHAR(100),
 		FOREIGN KEY(creatorid) REFERENCES Users(userid) ON DELETE CASCADE,
 		FOREIGN KEY(eventid) REFERENCES Event ON DELETE CASCADE,
 	    PRIMARY KEY(creatorid, eventid));
 
 
--- Table list of all participants, including eventid AND staus --
+-- Relationship:  Table list of all participants, including eventid AND staus --
 CREATE TABLE Participants
     	(pptid VARCHAR(100),
 		 eventid VARCHAR(100),
@@ -86,20 +92,16 @@ CREATE TABLE Participants
 		FOREIGN KEY(eventid) REFERENCES Event ON DELETE CASCADE,
 	    PRIMARY KEY(pptid, eventid));
 
--- Photo --
+-- Identity : Photo --
 CREATE TABLE Photo
 	(photoid VARCHAR(100),
 	 caption VARCHAR(100),
 	 time_created TIMESTAMP(6),
 	 time_modified TIMESTAMP(6),
 	 photolink VARCHAR(100),
-	 --albumid INTEGER,
-	 --KEY(albumid) REFERENCES Album,  added back at end
 	 PRIMARY KEY(photoid));
 
-
-
--- Album --
+-- Identity:   Album --
 CREATE TABLE Album
 	(albumid VARCHAR(100),
 	  userid VARCHAR(100),
@@ -114,7 +116,7 @@ CREATE TABLE Album
 	  PRIMARY KEY(albumid));
 
 
--- Relation: Tags in photos--
+-- Relation: Person -> photos---------------
 CREATE TABLE Tags
 	(photoid VARCHAR2(100),
 	 userid VARCHAR2(100),
@@ -125,7 +127,7 @@ CREATE TABLE Tags
 	 FOREIGN KEY(userid) REFERENCES Users ON DELETE CASCADE,
 	 PRIMARY KEY(photoid, userid));
 
--- Relation: between photo and Album ---
+-- Relationship:  photo Belongs to Album ---
 CREATE TABLE Belongs
 	(photoid VARCHAR(100),
 	 albumid VARCHAR(100),
@@ -134,7 +136,7 @@ CREATE TABLE Belongs
 	 PRIMARY KEY(photoid, albumid));
 
 
--- Relation  : Album owned by one user --
+-- Relationship  : Album owned by one user --
 CREATE TABLE Owns
 	(albumid VARCHAR(100),
 	 userid VARCHAR(100),
@@ -144,7 +146,7 @@ CREATE TABLE Owns
 
 
 
--- Education  DO WE NEED A EDUCATION ID???????????????????????????????????????????--
+--- Identity: Education  ----------------------
 CREATE TABLE Education
 	(eduid INTEGER,
 	 inst_name VARCHAR(100),	
@@ -153,7 +155,7 @@ CREATE TABLE Education
 	 concentration VARCHAR(100),	
 	 PRIMARY KEY(eduid));
 
-
+--Relationship:    Attend --------------------
 CREATE TABLE Attend
 	(eduid INTEGER,
 	userid VARCHAR(100),	
@@ -161,55 +163,35 @@ CREATE TABLE Attend
 	PRIMARY KEY(eduid, userid));
 
 
--- MEssage 
+-- Identity: Messages-------------------------
 CREATE TABLE Messages
 	(messageid INTEGER,
 	 time TIMESTAMP(6),
-	 --sender INTEGER,
 	 content VARCHAR(100),
-	 --FOREIGN KEY(sender) REFERENCES Users(userid),
 	 PRIMARY KEY(messageid));	
 
-
+-- Relationship:   User ->  Message ------------------------
 CREATE TABLE Sender
 	(messageid INTEGER,
-	--timesend TIMESTAMP(6),
 	userid VARCHAR(100),
-	--FOREIGN KEY(timesend) REFERENCES Messages(time),
 	FOREIGN KEY(messageid) REFERENCES Messages ON DELETE CASCADE,
 	FOREIGN KEY(userid) REFERENCES Users ON DELETE CASCADE,
 	PRIMARY KEY(messageid,userid));
 
+
+-- Relationship:   User ->  Message ------------------------
 CREATE TABLE Receiver
 	(messageid INTEGER,
-	--timesend TIMESTAMP(6),
 	userid VARCHAR(100),
-	--FOREIGN KEY(timesend) REFERENCES Messages(time),
 	FOREIGN KEY(messageid) REFERENCES Messages ON DELETE CASCADE,
 	FOREIGN KEY(userid) REFERENCES Users ON DELETE CASCADE,
 	PRIMARY KEY(messageid,userid));
 
--- CREATE TABLE Receiver
--- 	(time TIMESTAMP(6),
--- 	 userid INTEGER,
--- 	FOREIGN KEY(time) REFERENCES Messages,
--- 	FOREIGN KEY(userid) REFERENCES Users,
--- 	PRIMARY KEY(time,userid));
 
-
-
-
+----- Alter photo Attribute to include albumid since circular 
+----- constraint ---------------------------------------------
 ALTER TABLE Photo
 	ADD (albumid VARCHAR(100), 
 		FOREIGN KEY(albumid) REFERENCES Album ON DELETE CASCADE);
 
--- ALTER TABLE Photo ADD CONSTRAINT PHOTO_REFERS_ALBUM  FOREIGN KEY (albumid) REFERENCES Album INITIALLY DEFERRED DEFERRABLE;
--- ALTER TABLE Album ADD CONSTRAINT Album_REFERS_PHOTO  FOREIGN KEY (coverphotoid) REFERENCES Photo INITIALLY DEFERRED DEFERRABLE;
-
-
-
-
--- ALTER TABLE Messages
--- 	ADD (sender INTEGER, 
--- 		FOREIGN KEY(userid) REFERENCES Sender);
 

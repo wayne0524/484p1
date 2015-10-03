@@ -1,3 +1,27 @@
+-- Author: Shengwei Ge, Date 10/02/2015 --------------------------------
+------------------------------------------------------------------------
+--Description: This file translate local Tables into  a bigger tables 
+--             for view
+--              Simply Put: Translating Data to original database format 
+------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------
+-----------       # of Views created:  5    ----------------------------
+-- VIEW_USER_INFORMATION----
+-- VIEW_ARE_FRIENDS --------
+-- VIEW_POHOTO_INFORMATION--
+-- VIEW_TAG_INFORMATION-----
+-- VIEW_EVENT_INFORMATION---
+------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------
+-- Create View UserInfo  -----------------------------------------------
+-- Note:  Left Join helps us include colums are NULL, instead of getting
+--        rid of previous colums ---------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
 CREATE VIEW VIEW_USER_INFORMATION 
    (USER_ID,
    	FIRST_NAME,
@@ -36,7 +60,10 @@ CREATE VIEW VIEW_USER_INFORMATION
 
 
 
-
+------------------------------------------------------------------------
+-- Create View Friendship ----------------------------------------------
+-- List all rows in friendship Tables ----------------------------------
+------------------------------------------------------------------------
 CREATE VIEW VIEW_ARE_FRIENDS(USER1_ID, USER2_ID)
 AS SELECT F.user1,
           F.user2
@@ -44,7 +71,10 @@ FROM friendship F;
 
 
 
-
+------------------------------------------------------------------------
+-- Create View Photo  --------------------------------------------------
+-- List all rows PHOTO INFO Tables -------------------------------------
+------------------------------------------------------------------------
 CREATE VIEW VIEW_PHOTO_INFORMATION
 (ALBUM_ID,
   OWNER_ID,
@@ -81,6 +111,12 @@ CREATE VIEW VIEW_PHOTO_INFORMATION
  ON O.albumid = A.albumid;
 
 
+
+
+------------------------------------------------------------------------
+-- Create View  Tag Infor  ---------------------------------------------
+-- List people who are tagged in photos --------------------------------
+------------------------------------------------------------------------
 CREATE VIEW VIEW_TAG_INFORMATION
   (PHOTO_ID,
    TAG_SUBJECT_ID,
@@ -95,6 +131,11 @@ CREATE VIEW VIEW_TAG_INFORMATION
   FROM Tags T;
 
 
+
+------------------------------------------------------------------------
+-- Create View  Event Information---------------------------------------
+-- List all event info in table ----------------------------------------
+------------------------------------------------------------------------
 CREATE VIEW VIEW_EVENT_INFORMATION
     (EVENT_ID,
       EVENT_CREATOR_ID,
@@ -134,40 +175,3 @@ CREATE VIEW VIEW_EVENT_INFORMATION
 
 
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- CREATE VIEW VIEW_ARE_FRIENDS
-
--- CREATE VIEW VIEW_PHOTO_INFORMATION
-
-
-
--- CREATE VIEW VIEW_TAG_INFORMATION
-
-
-
--- CREATE VIEW VIEW_EVENT_INFORMATION
